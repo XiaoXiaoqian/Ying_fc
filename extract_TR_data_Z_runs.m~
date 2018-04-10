@@ -1,0 +1,28 @@
+function extract_TR_data_maint(sub,run)
+%extract testing and localizer task timepoint
+
+basedir='/seastor/caiying/ActionMemory2_m';
+
+addpath /seastor/caiying/toolbox/NIFTI
+
+
+%% loop for subs
+%localizer
+
+    %load data
+    load(sprintf('%s/behav/results/sub%02d_trial_list.mat',basedir,sub));
+    niifile=sprintf('%s/sub%02d/analysis/Extracted_maint_TR_2standard_sub%02d.nii',basedir,sub,sub);
+    %for run=1:5 %zscore within each run
+    %niifile=sprintf('%s/sub%02d/analysis/run%d_singletrial.feat/filtered_func_data_2standard.nii.gz',basedir,sub,run);
+    all_data=load_nii_zip(niifile);
+    all_data_ecd_sub=zscore(all_data,0,4);
+             
+    filename=sprintf('%s/sub%02d/analysis/Extracted_maint_TR_2standard_sub.nii',basedir,sub,run);
+    all_data.img=all_data_ecd_sub;
+    all_data.hdr.dime.dim(5)=60; % dimension change according to extracted TR
+    save_untouch_nii(all_data, filename);
+    clear all_data all_data_final_mait tmp onset vol filename
+    sprintf('Extract TR: Sub%02d run%02d is done',sub, run)
+    
+    end % sub
+
